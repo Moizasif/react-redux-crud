@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography } from 'mdb-react-ui-kit';
-
+import { makeStyles } from '@material-ui/core';
 
 const initialState = {
     name:"",
@@ -10,8 +10,23 @@ const initialState = {
 
 }
 
+const useStyles = makeStyles((theme) => ({
+    root : {
+        marginTop: 70,
+        margin: "auto",
+        padding: "15px",
+        maxWidth: "500px",
+        alignContent: "center",
+        "& > *": {
+            margin:theme.spacing(1),
+            width:"45ch",
+        },
+
+    },
+}));
 
 const Home = () => {
+    const classes = useStyles();
     const [state, setState] = useState(initialState);
 
     //Destructuring
@@ -31,7 +46,8 @@ const Home = () => {
                          <h2>Table</h2>
                  </MDBCol>
                  <MDBCol md="4">
-                         <form onSubmit={handleSubmit}>
+                         <form onSubmit={handleSubmit} className={classes.root}>
+                             <MDBTypography className="text-start" variant="h4">Add Contact</MDBTypography>
                             <MDBInput 
                             label="Name"
                             value={name}
