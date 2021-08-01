@@ -1,8 +1,8 @@
 import React, {useState,useEffect} from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
 import {useDispatch,useSelector} from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { addContactInitiate, getContactsInitiate } from './redux/actions';
+import { addContactInitiate, deleteContactInitiate, getContactsInitiate } from './redux/actions';
 
 const initialState = {
     name:"",
@@ -41,6 +41,13 @@ const Home = () => {
        dispatch(getContactsInitiate())
     },[])
 
+
+    const deleteContact = (id) => {
+           if(window.confirm("Are you sure you wanted to delete?")) {
+           dispatch(deleteContactInitiate(id))
+           }
+    }
+
     const handleInputChange = (e) => {
       let {name, value} = e.target;
       setState({...state,[name]:value})
@@ -74,7 +81,11 @@ const Home = () => {
            <td>{item.contact}</td>
            <td>{item.email}</td>
            <td>{item.address}</td>
-           <td></td>
+           <td>
+               <MDBBtn className="m1" tag="a" color="none" style={{color:"#dd4b39"}} onClick={() => deleteContact(item.id)}>
+                   <MDBIcon fas icon="trash" size="lg"/>
+               </MDBBtn>
+           </td>
            
            
          </tr>

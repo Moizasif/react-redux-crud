@@ -12,6 +12,10 @@ const addContact = () => ({
     type: types.ADD_CONTACT
 })
 
+const deleteContact = () => ({
+    type: types.DELETE_CONTACT
+})
+ 
 
 export const getContactsInitiate = () => {
     return function(dispatch){
@@ -30,5 +34,13 @@ export const addContactInitiate = (contact) => {
     return function(dispatch) {
      db.collection("contacts").doc().set(contact);
      dispatch(addContact());
+    }
+}
+
+export const deleteContactInitiate = (id) => {
+    //Using dispatch beacause we are using redux thunk
+    return function(dispatch) {
+     db.collection("contacts").doc(id).delete();
+     dispatch(deleteContact());
     }
 }
