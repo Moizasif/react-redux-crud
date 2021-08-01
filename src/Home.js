@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography } from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import {useDispatch,useSelector} from 'react-redux';
 import { makeStyles } from '@material-ui/core';
+import { addContactInitiate } from './redux/actions';
 
 const initialState = {
     name:"",
@@ -31,19 +33,51 @@ const Home = () => {
 
     //Destructuring
     const {name, contact, email , address} = state;
+    const dispatch = useDispatch();
 
-    const handleInputChange = () => {
-
+    const handleInputChange = (e) => {
+      let {name, value} = e.target;
+      setState({...state,[name]:value})
     }
 
-    const handleSubmit = () => {
-
+    const handleSubmit = (e) => {
+     e.preventDefault();
+     dispatch(addContactInitiate(state));
     }
     return (
         <MDBContainer fluid>
             <MDBRow>
                  <MDBCol md="8">
-                         <h2>Table</h2>
+                 <MDBTable style={{marginTop:"100px"}} bordered>
+      <MDBTableHead dark>
+        <tr>
+          <th scope='col'>#</th>
+          <th scope='col'>First</th>
+          <th scope='col'>Last</th>
+          <th scope='col'>Handle</th>
+        </tr>
+      </MDBTableHead>
+      <MDBTableBody>
+        <tr>
+          <th scope='row'>1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+        </tr>
+        <tr>
+          <th scope='row'>2</th>
+          <td>Jacob</td>
+          <td>Thornton</td>
+          <td>@fat</td>
+        </tr>
+        <tr>
+          <th scope='row'>3</th>
+          <td>Larry</td>
+          <td>the Bird</td>
+          <td>@twitter</td>
+        </tr>
+      </MDBTableBody>
+    </MDBTable>
                  </MDBCol>
                  <MDBCol md="4">
                          <form onSubmit={handleSubmit} className={classes.root}>
