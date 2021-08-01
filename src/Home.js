@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import {useDispatch,useSelector} from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { addContactInitiate } from './redux/actions';
+import { addContactInitiate, getContactsInitiate } from './redux/actions';
 
 const initialState = {
     name:"",
@@ -34,6 +34,12 @@ const Home = () => {
     //Destructuring
     const {name, contact, email , address} = state;
     const dispatch = useDispatch();
+    //Because our reducer use with key data
+    const {contacts} = useSelector(state => state.data);
+
+    useEffect(() => {
+       dispatch(getContactsInitiate())
+    },[])
 
     const handleInputChange = (e) => {
       let {name, value} = e.target;
@@ -43,6 +49,7 @@ const Home = () => {
     const handleSubmit = (e) => {
      e.preventDefault();
      dispatch(addContactInitiate(state));
+     setState({name:"", email:"", contact:"", address:""});
     }
     return (
         <MDBContainer fluid>
@@ -51,32 +58,29 @@ const Home = () => {
                  <MDBTable style={{marginTop:"100px"}} bordered>
       <MDBTableHead dark>
         <tr>
-          <th scope='col'>#</th>
-          <th scope='col'>First</th>
-          <th scope='col'>Last</th>
-          <th scope='col'>Handle</th>
+          <th scope='col'>No</th>
+          <th scope='col'>Name</th>
+          <th scope='col'>Contact</th>
+          <th scope='col'>Email</th>
+          <th scope='col'>Address</th>
+          <th scope='col'>Action</th>
         </tr>
       </MDBTableHead>
-      <MDBTableBody>
-        <tr>
-          <th scope='row'>1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope='row'>2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope='row'>3</th>
-          <td>Larry</td>
-          <td>the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </MDBTableBody>
+      {contacts && contacts.map((item,index)=> (
+             <MDBTableBody key={index}>
+           <tr>
+           <th scope='row'>{index + 1}</th>
+           <td>{item.name}</td>
+           <td>{item.contact}</td>
+           <td>{item.email}</td>
+           <td>{item.address}</td>
+           <td></td>
+           
+           
+         </tr>
+         </MDBTableBody>
+      ))}
+   
     </MDBTable>
                  </MDBCol>
                  <MDBCol md="4">
