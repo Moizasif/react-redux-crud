@@ -32,6 +32,7 @@ const Home = () => {
     const [state, setState] = useState(initialState);
     const [editMode, setEditMode] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     //Destructuring
     const {name, contact, email , address} = state;
@@ -69,20 +70,25 @@ const Home = () => {
 
     const handleSubmit = (e) => {
      e.preventDefault();
+     if(!name || !contact || !email ||!address){
+         setErrorMsg("Please fill all input fields")        
+    } else {
      if(!editMode){
         dispatch(addContactInitiate(state));
         setState({name:"", email:"", contact:"", address:""});
+        setErrorMsg("");
      }else {
          dispatch(updateContactInitiate(userId,state));
          setUserId(null);
          setEditMode(false);
          setState({name:"", email:"", contact:"", address:""});
+         setErrorMsg("");
          
 
 
      }
 
-     
+    }
     }
     return (
         <MDBContainer fluid>
@@ -126,6 +132,7 @@ const Home = () => {
                  <MDBCol md="4">
                          <form onSubmit={handleSubmit} className={classes.root}>
                              <MDBTypography className="text-start" variant="h4">{!editMode ? "Add Contact" : "Update Contact"}</MDBTypography>
+                             {errorMsg && <h6 className="text-start" style={{color:"red"}}>{errorMsg}</h6>}
                             <MDBInput 
                             label="Name"
                             value={name || ""}
