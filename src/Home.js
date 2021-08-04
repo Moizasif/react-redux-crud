@@ -1,8 +1,14 @@
 import React, {useState,useEffect} from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody, MDBIcon,MDBModal,
+    MDBModalDialog,
+    MDBModalContent,
+    MDBModalHeader,
+    MDBModalTitle,
+    MDBModalBody,
+    MDBModalFooter } from 'mdb-react-ui-kit';
 import {useDispatch,useSelector} from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { addContactInitiate, deleteContactInitiate, getContactInitiate, getContactsInitiate, updateContactInitiate } from './redux/actions';
+import { addContactInitiate, deleteContactInitiate, getContactInitiate, getContactsInitiate, reset, updateContactInitiate } from './redux/actions';
 
 const initialState = {
     name:"",
@@ -31,6 +37,7 @@ const Home = () => {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
     const [editMode, setEditMode] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [userId, setUserId] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
@@ -61,6 +68,39 @@ const Home = () => {
          setEditMode(true);
          setUserId(id);
          dispatch(getContactInitiate(id))
+    }
+
+    const modalBody = (
+        <div className="row">
+          <div className="col-sm-4">
+           Name
+          </div>
+          <div className="col-sm-8">{singleContact.name}</div>
+          <div className="col-sm-4">
+           Contact
+          </div>
+          <div className="col-sm-8">{singleContact.contact}</div>
+          <div className="col-sm-4">
+           Email
+          </div>
+          <div className="col-sm-8">{singleContact.email}</div>
+          <div className="col-sm-4">
+           Address
+          </div>
+          <div className="col-sm-8">{singleContact.address}</div>
+
+        </div>
+    )
+
+    const handleModal = (id) => {
+        setModalOpen(true);
+        dispatch(getContactInitiate(id))
+
+    }
+
+    const handleClosedModal = () => {
+        setModalOpen(false);
+        dispatch(reset());
     }
 
     const handleInputChange = (e) => {
@@ -114,9 +154,14 @@ const Home = () => {
            <td>{item.email}</td>
            <td>{item.address}</td>
            <td>
-           <MDBBtn className="m1" tag="a" color="none" style={{color:"#55acee"}} onClick={() => editContact(item.id)}>
+           <MDBBtn className="m1" tag="a" color="none" style={{color:"#3b5998"}} onClick={() => handleModal(item.id)}>
+                   <MDBIcon fas icon="eye" size="lg"/>
+               </MDBBtn>
+               <MDBBtn className="m1" tag="a" color="none" style={{color:"#55acee"}} onClick={() => editContact(item.id)}>
                    <MDBIcon fas icon="pen" size="lg"/>
                </MDBBtn>
+               
+
                <MDBBtn className="m1" tag="a" color="none" style={{color:"#dd4b39"}} onClick={() => deleteContact(item.id)}>
                    <MDBIcon fas icon="trash" size="lg"/>
                </MDBBtn>
@@ -124,6 +169,25 @@ const Home = () => {
            
            
          </tr>
+         {modalOpen && (
+              <MDBModal show={modalOpen} tabIndex='-1'>
+              <MDBModalDialog>
+                <MDBModalContent>
+                  <MDBModalHeader>
+                    <MDBModalTitle>Contact Info</MDBModalTitle>
+                    <MDBBtn className='btn-close' color='none' onClick={handleClosedModal}></MDBBtn>
+                  </MDBModalHeader>
+                  <MDBModalBody>{modalBody}</MDBModalBody>
+        
+                  <MDBModalFooter>
+                    <MDBBtn color='secondary' onClick={handleClosedModal}>
+                      Close
+                    </MDBBtn>
+                  </MDBModalFooter>
+                </MDBModalContent>
+              </MDBModalDialog>
+            </MDBModal>
+         )}
          </MDBTableBody>
       ))}
    

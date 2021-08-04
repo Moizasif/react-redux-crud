@@ -25,6 +25,9 @@ const getContact = (contact) => ({
     payload: contact
 })
  
+export const reset = () => ({
+    type:types.RESET
+})
  
 
 export const getContactsInitiate = () => {
