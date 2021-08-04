@@ -2,7 +2,7 @@ import React, {useState,useEffect} from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography,MDBTable, MDBTableHead, MDBTableBody, MDBIcon } from 'mdb-react-ui-kit';
 import {useDispatch,useSelector} from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { addContactInitiate, deleteContactInitiate, getContactsInitiate } from './redux/actions';
+import { addContactInitiate, deleteContactInitiate, getContactInitiate, getContactsInitiate, updateContactInitiate } from './redux/actions';
 
 const initialState = {
     name:"",
@@ -30,22 +30,36 @@ const useStyles = makeStyles((theme) => ({
 const Home = () => {
     const classes = useStyles();
     const [state, setState] = useState(initialState);
+    const [editMode, setEditMode] = useState(false);
+    const [userId, setUserId] = useState(null);
 
     //Destructuring
     const {name, contact, email , address} = state;
     const dispatch = useDispatch();
     //Because our reducer use with key data
-    const {contacts} = useSelector(state => state.data);
+    const {contacts, contact:singleContact} = useSelector(state => state.data);
 
     useEffect(() => {
        dispatch(getContactsInitiate())
     },[])
+
+    useEffect(()=> {
+        if(singleContact) {
+            setState({...singleContact})
+        }
+    },[singleContact])
 
 
     const deleteContact = (id) => {
            if(window.confirm("Are you sure you wanted to delete?")) {
            dispatch(deleteContactInitiate(id))
            }
+    }
+
+    const editContact = (id) => {
+         setEditMode(true);
+         setUserId(id);
+         dispatch(getContactInitiate(id))
     }
 
     const handleInputChange = (e) => {
@@ -55,8 +69,20 @@ const Home = () => {
 
     const handleSubmit = (e) => {
      e.preventDefault();
-     dispatch(addContactInitiate(state));
-     setState({name:"", email:"", contact:"", address:""});
+     if(!editMode){
+        dispatch(addContactInitiate(state));
+        setState({name:"", email:"", contact:"", address:""});
+     }else {
+         dispatch(updateContactInitiate(userId,state));
+         setUserId(null);
+         setEditMode(false);
+         setState({name:"", email:"", contact:"", address:""});
+         
+
+
+     }
+
+     
     }
     return (
         <MDBContainer fluid>
@@ -82,6 +108,9 @@ const Home = () => {
            <td>{item.email}</td>
            <td>{item.address}</td>
            <td>
+           <MDBBtn className="m1" tag="a" color="none" style={{color:"#55acee"}} onClick={() => editContact(item.id)}>
+                   <MDBIcon fas icon="pen" size="lg"/>
+               </MDBBtn>
                <MDBBtn className="m1" tag="a" color="none" style={{color:"#dd4b39"}} onClick={() => deleteContact(item.id)}>
                    <MDBIcon fas icon="trash" size="lg"/>
                </MDBBtn>
@@ -96,10 +125,10 @@ const Home = () => {
                  </MDBCol>
                  <MDBCol md="4">
                          <form onSubmit={handleSubmit} className={classes.root}>
-                             <MDBTypography className="text-start" variant="h4">Add Contact</MDBTypography>
+                             <MDBTypography className="text-start" variant="h4">{!editMode ? "Add Contact" : "Update Contact"}</MDBTypography>
                             <MDBInput 
                             label="Name"
-                            value={name}
+                            value={name || ""}
                             name="name"
                             type="text"
                             onChange={handleInputChange}
@@ -107,7 +136,7 @@ const Home = () => {
                             <br />
                             <MDBInput 
                             label="Contact"
-                            value={contact}
+                            value={contact || ""}
                             name="contact"
                             type="number"
                             onChange={handleInputChange}
@@ -115,7 +144,7 @@ const Home = () => {
                             <br />
                             <MDBInput 
                             label="Email"
-                            value={email}
+                            value={email || ""}
                             name="email"
                             type="email"
                             onChange={handleInputChange}
@@ -123,14 +152,14 @@ const Home = () => {
                             <br />
                             <MDBInput 
                             label="Address"
-                            value={address}
+                            value={address || ""}
                             name="address"
                             type="text"
                             onChange={handleInputChange}
                             />
                             <br />
-                            <MDBBtn style={{width:"100px"}} color="success" type="submit">
-                                 Submit
+                            <MDBBtn style={{width:"100px"}} color={!editMode ? "success" : "warning"} type="submit">
+                                 {!editMode ? "Submit" : "Update"}
                             </MDBBtn>
                          </form>
                  </MDBCol>

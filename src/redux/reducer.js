@@ -12,6 +12,11 @@ const contactReducer = (state=initialState, action) => {
             return {
                 ...state,
                 contacts: action.payload,
+            };
+            case types.GET_CONTACT:
+            return {
+                ...state,
+                contact: action.payload,
             }
         default:
             return state;

@@ -15,6 +15,16 @@ const addContact = () => ({
 const deleteContact = () => ({
     type: types.DELETE_CONTACT
 })
+
+const updateContact = () => ({
+    type: types.UPDATE_CONTACT
+})
+
+const getContact = (contact) => ({
+    type: types.GET_CONTACT,
+    payload: contact
+})
+ 
  
 
 export const getContactsInitiate = () => {
@@ -42,5 +52,24 @@ export const deleteContactInitiate = (id) => {
     return function(dispatch) {
      db.collection("contacts").doc(id).delete();
      dispatch(deleteContact());
+    }
+}
+
+
+export const updateContactInitiate = (id, contact) => {
+    //Using dispatch beacause we are using redux thunk
+    return function(dispatch) {
+     db.collection("contacts").doc(id).update(contact);
+     dispatch(updateContact());
+    }
+}
+
+
+export const getContactInitiate = (id) => {
+    //Using dispatch beacause we are using redux thunk
+    return function(dispatch) {
+     db.collection("contacts").doc(id).get().then((contact) => {
+         dispatch(getContact({...contact.data()}));
+     }).catch(error => console.log(error))
     }
 }
